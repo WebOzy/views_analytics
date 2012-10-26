@@ -1,0 +1,80 @@
+<?php
+
+/**
+ * Implementation of hook_install().
+ */
+function views_analytics_install() {
+	drupal_install_schema('views_analytics');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function views_analytics_uninstall() {
+	drupal_uninstall_schema('views_analytics');
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function views_analytics_schema() {
+	$schema['views_analytics_views'] = array(
+		'fields' => array(
+      'vid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'count' => array(
+        'description' => 'The total number of times the display has been rendered.',
+        'type' => 'int',
+        'size' => 'big',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'timestamp' => array(
+        'description' => 'The most recent time that the view was rendered.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+    ),
+    'primary key' => array('vid')
+	);
+	$schema['views_analytics_displays'] = array(
+		'fields' => array(
+      'vid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'id' => array(
+        'type' => 'varchar',
+        'length' => '64',
+        'default' => '',
+        'not null' => TRUE
+      ),
+      'count' => array(
+        'description' => 'The total number of times the display has been rendered.',
+        'type' => 'int',
+        'size' => 'big',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'timestamp' => array(
+        'description' => 'The most recent time that the view was rendered.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+    ),
+    'primary key' => array('vid', 'id')
+	);
+	return $schema;
+}

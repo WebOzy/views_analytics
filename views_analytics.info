@@ -1,0 +1,5 @@
+name = Views Analytics
+description = Tracks the calls to Views and their displays.
+core = 6.x
+package = Views
+dependencies[] = views
