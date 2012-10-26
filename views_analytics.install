@@ -1,25 +1,29 @@
 <?php
+/**
+ * @file
+ * Install, update, and uninstall functions for the XXX module.
+ */
 
 /**
  * Implementation of hook_install().
  */
 function views_analytics_install() {
-	drupal_install_schema('views_analytics');
+  drupal_install_schema('views_analytics');
 }
 
 /**
  * Implementation of hook_uninstall().
  */
 function views_analytics_uninstall() {
-	drupal_uninstall_schema('views_analytics');
+  drupal_uninstall_schema('views_analytics');
 }
 
 /**
  * Implementation of hook_schema().
  */
 function views_analytics_schema() {
-	$schema['views_analytics_views'] = array(
-		'fields' => array(
+  $schema['views_analytics_views'] = array(
+    'fields' => array(
       'vid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
@@ -43,9 +47,9 @@ function views_analytics_schema() {
       ),
     ),
     'primary key' => array('vid')
-	);
-	$schema['views_analytics_displays'] = array(
-		'fields' => array(
+  );
+  $schema['views_analytics_displays'] = array(
+    'fields' => array(
       'vid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
@@ -75,6 +79,6 @@ function views_analytics_schema() {
       ),
     ),
     'primary key' => array('vid', 'id')
-	);
-	return $schema;
+  );
+  return $schema;
 }

@@ -1,16 +1,10 @@
 <?php
-
 /**
- * Simple hook to add to count when views_pre_render is called
+ * Hook views_pre_render to add to count.
  */
 
-// D6
-
 function views_analytics_views_pre_render(&$view) {
-  // dsm($view);
-  
   if (!$view->preview) {
-    // the following is stolen from the statistic module
     db_query('UPDATE {views_analytics_views}
       SET count = count + 1,
         timestamp = %d 
@@ -32,24 +26,21 @@ function views_analytics_views_pre_render(&$view) {
     // If we affected 0 rows, this is the first time viewing the node.
     if (!db_affected_rows()) {
       // We must create a new row to store counters for the new View.
-      db_query('INSERT INTO {views_analytics_displays} (vid, id, count, timestamp) VALUES (%d, "%s", 1, %d)', $view->vid, $view->current_display, time());
+      db_query('INSERT INTO {views_analytics_displays} (vid, id, count, timestamp) VALUES (%d, "%s", 1, %d)',
+        $view->vid, $view->current_display, time());
     }
   }
 }
-/*
-function views_analytics_get_view_id(&$view) {
-  $query = 'SELECT * FROM {views_analytics_views} WHERE vid = %d';
-  dsm ($view);
-  print $view->vid;
-  $result = db_query($query, $view->vid);
-  print_r($result);
-  $stats = db_fetch_object($result);
 
-  return $stats;
+function hook_views_pre_view(&$view) {
+  print 'banana';
 }
-*/
 
-function _views_analytics_get_view_analytics($view) {
+/**
+ * Gather the analytics for a View.
+ */
+
+function views_analytics_get_view_analytics($view) {
   if ($view->type != 'Default') {
     $view = views_get_view($view->name);
     $stats = db_query('SELECT * FROM {views_analytics_views} WHERE vid = %d', $view->vid);
@@ -68,45 +59,29 @@ function _views_analytics_get_view_analytics($view) {
   }
 }
 
-function views_analytics_print_view_analytics($view) {
-  $analytics = _views_analytics_get_view_analytics($view);
-  $view_analytics = 'This View has been called '. $analytics->count .' times.';
-  if ($analytics->count > 0) {
-    $view_analytics .=  '<br />';
-    $view_analytics .=  'It was last called called on '. format_date($analytics->timestamp, 'custom', 'F jS, Y \a\t g:ia') .'.';
+/**
+ * Output analytics as a printable string.
+ */
+
+function views_analytics_theme_view_analytics($view) {
+  if ($view->type != 'Default') {
+    $analytics = views_analytics_get_view_analytics($view);
+    $view_analytics = '<div class="view-analytics">This View has been called <strong>' . $analytics->count . '</strong> times.';
+    if ($analytics->count > 0) {
+      $view_analytics .=  ' It was last called called on <strong>'. format_date($analytics->timestamp, 'custom', 'F jS, Y \a\t g:ia') .'</strong>.';
+    }
+    $view_analytics .= '</div>';
+    
+    return $view_analytics;
   }
-  
-  return $view_analytics;
-}
-
-
-// D7
-
-/*
-function views_analytics_views_pre_render(&$view) {
-  // dsm($view);
-  $vid = $view->vid;
-  
-  // the following is stolen from the statistic module
-  db_query('UPDATE {views_analytics}
-    SET count = count + 1,
-      timestamp = :time 
-    WHERE vid = :vid
-    AND id = :id',
-    array(':time' => $uid, ':vid' => $view->vid, ':id' => $view->current_display));
-  // If we affected 0 rows, this is the first time viewing the node.
-  if (!db_affected_rows()) {
-    // We must create a new row to store counters for the new View.
-    db_query('INSERT INTO {views_analytics} (vid, id, count, timestamp) VALUES (%d, %s, 1, %d)', $view->vid, $view->current_display, time());
+  else {
+    return FALSE;
   }
 }
-*/
 
 /**
- * Implementation of hook_nodeapi().
+ * To Do: Implement cleanup of tables. The following is from the statistics module.
  */
- 
-// need to implement cleanup at some point
  
 /*
 function statistics_nodeapi(&$node, $op, $arg = 0) {
